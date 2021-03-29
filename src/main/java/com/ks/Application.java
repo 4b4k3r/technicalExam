@@ -1,5 +1,9 @@
 package com.ks;
 
+import java.util.HashMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 /**
  * Exam :)
  */
@@ -19,8 +23,7 @@ public class Application
      */
     public static int yearsToCenturies(int years)
     {
-        //Let's start!
-        return 0;
+        return (years / 100) + 1;
     }
 
     /**
@@ -40,8 +43,10 @@ public class Application
      */
     public static boolean scramble(String str1, String str2)
     {
-        //First tear ;(
-        return false;
+        HashMap<String, Integer> values = new HashMap<>();
+        Stream.of(str1.split("")).forEach(a -> values.merge(a, 1, Integer::sum));
+        Stream.of(str2.split("")).forEach(a -> values.merge(a, -1, Integer::sum));
+        return values.values().stream().noneMatch(v -> v < 0);
     }
 
     /**
@@ -62,8 +67,9 @@ public class Application
      */
     public static String getMiddle(String word)
     {
-        //So easy ...
-        return "";
+        return word.length() % 2 > 0 ?
+                String.valueOf(word.charAt((word.length() / 2))) :
+                word.substring((int) Math.ceil(word.length() / 2d) - 1, (int) Math.ceil(word.length() / 2d) + 1);
     }
 
     /**
@@ -85,8 +91,9 @@ public class Application
      */
     public static int duplicateCount(String text)
     {
-        //have fun!
-        return 0;
+        HashMap<String, Integer> repeated = new HashMap<>();
+        Stream.of(text.toLowerCase().split("")).forEach(val -> repeated.merge(val, 1, Integer::sum));
+        return (int) repeated.values().stream().filter(v -> v > 1).count();
     }
 
     /**
@@ -104,8 +111,10 @@ public class Application
      */
     public static int getCount(String str)
     {
-        //...
-        return 0;
+        return Stream.of(str.split(""))
+                .map(v -> v.matches("[aeiou]") ? 1 : 0)
+                .reduce(Integer::sum)
+                .orElse(-1);
     }
 
     /**
@@ -118,15 +127,22 @@ public class Application
      *
      * 236 -> (2 * 3 * 6) = [36] -> (3 * 6) = [18] (1 * 8) = [8]
      *
-     * <h3> How many times a decimal values need be multiplied to find a root number</h3>
-     *
      * @param n a number to find a digital root
      * @return how many times a decimal values in a number can be multiplied recursively
      */
     public static int persistence(long n)
     {
-        //Next is so easy after this
-        return 0;
+        String val = String.valueOf(n);
+
+        while (val.length() > 1)
+        {
+            val = String.valueOf(Stream.of(val.split(""))
+                    .map(Integer::parseInt)
+                    .reduce((a, b) -> a * b)
+                    .orElse(-1));
+        }
+
+        return Integer.parseInt(val);
     }
 
     /**
@@ -144,8 +160,17 @@ public class Application
      */
     public static int digital_root(int n)
     {
-        //Another easy
-        return 0;
+        String val = String.valueOf(n);
+
+        while (val.length() > 1)
+        {
+            val = String.valueOf(Stream.of(val.split(""))
+                    .map(Integer::parseInt)
+                    .reduce(Integer::sum)
+                    .orElse(-1));
+        }
+
+        return Integer.parseInt(val);
     }
 
 
@@ -163,8 +188,7 @@ public class Application
      */
     public static String[] solution(String s)
     {
-        //Will be worse ?
-        return new String[]{};
+        return (s + (s.length() % 2 > 0 ? "_" : "")).split("(?<=\\G..)");
     }
 
     /**
@@ -185,8 +209,10 @@ public class Application
      */
     public static String longToIP(long ip)
     {
-        //yes, can be worse...
-        return "";
+        return Stream.of(String.format("%32s", Long.toBinaryString(ip)).replace(" ", "0")
+                .split("(?<=\\G........)"))
+                .map(v -> String.valueOf(Integer.parseInt(v, 2)))
+                .collect(Collectors.joining("."));
     }
 
     /**
@@ -204,8 +230,11 @@ public class Application
      */
     public static int findShort(String s)
     {
-        //have fun!
-        return 0;
+        return Stream.of(s.split(" "))
+                .map(String::length)
+                .sorted()
+                .findFirst()
+                .orElse(-1);
     }
 
     /**
@@ -221,7 +250,14 @@ public class Application
      */
     public static Integer repeated(int[] values)
     {
-        //Last one!
-        return 0;
+        HashMap<Integer, Integer> valuesRepeated = new HashMap<>();
+
+        for (int value : values)
+        {
+            if (valuesRepeated.merge(value, 1, Integer::sum) > 1)
+                return value;
+        }
+
+        return -1;
     }
 }
